@@ -1,0 +1,56 @@
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+header {
+  background-color: #444;
+  width: 100%;
+  padding: 20px;
+}
+
+header h1 {
+  font-size: 2.5rem;
+}
+
+main {
+  flex-grow: 1;
+  width: 100%;
+  padding: 60px 0;
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 60px;
+}
+
+main form {
+  width: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 10px;
+}
+
+main form input {
+  display: block;
+  width: 100%;
+  border-radius: 10px;
+
+  padding: 10px 20px;
+  font-size: 2rem;
+}
+
+main div h2 {
+  font-size: 1.5rem;
+}
+
+main div p {
+  line-height: 1.375rem;
+}
+
+footer {
+  background-color: #444;
+  width: 100%;
+  text-align: right;
+
+  padding: 20px;
+}

@@ -1,0 +1,25 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+  margin: 0;
+}
+
+input {
+  border: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration-color: transparent;
+  transition: 300ms text-decoration-color;
+}
+
+a:hover {
+  text-decoration-color: inherit;
+}
