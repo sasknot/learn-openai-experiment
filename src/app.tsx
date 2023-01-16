@@ -1,5 +1,7 @@
-import { FormEvent, useState } from 'react'
 import './app.css'
+import { FormEvent, useState } from 'react'
+// import openAI from './openai'
+// console.log(await openAI.listModels())
 
 export default function () {
   const [input, setInput] = useState('')
