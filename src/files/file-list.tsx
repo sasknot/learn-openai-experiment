@@ -55,7 +55,7 @@ export default function ({ items, onFineTune, onDestroy }: FileListProps) {
                   type="button"
                   onClick={() => onDestroy && onDestroy(row.id)}
                 >
-                  &times;
+                  Delete
                 </button>
               </td>
             </tr>

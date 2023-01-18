@@ -39,6 +39,13 @@ export default function () {
       setOpenId('')
       setEvents([])
   }
+  async function handleCancel (id: string) {
+    await openAI.cancelFineTune(id)
+    // setItems([
+    //   ...items.filter((item) => item.model === model)
+    // ])
+    fetchItems().catch(console.error)
+  }
   async function handleDestroy (model: string) {
     await openAI.deleteModel(model)
     setItems([
@@ -48,7 +55,7 @@ export default function () {
 
   useEffect(() => {
     fetchItems().catch(console.error)
-  })
+  }, [])
 
   return (
     <StyledSection>
@@ -88,12 +95,20 @@ export default function () {
                       See events
                     </button>
                   )}
-                  {row.status !== 'pending' && (
+                  {' '}
+                  {row.status === 'pending' ? (
+                    <button
+                      type="button"
+                      onClick={() => handleCancel(row.id)}
+                    >
+                      Cancel
+                    </button>
+                  ) : (
                     <button
                       type="button"
                       onClick={() => handleDestroy(row.model)}
                     >
-                      &times;
+                      Delete
                     </button>
                   )}
                 </td>
@@ -103,8 +118,10 @@ export default function () {
                   <td colSpan={7}>
                     <table>
                       <thead>
-                        <th>Level</th>
-                        <th>Message</th>
+                        <tr>
+                          <th>Level</th>
+                          <th>Message</th>
+                        </tr>
                       </thead>
                       <tbody>
                         {events.map((eventRow, eventRowIndex) => (
