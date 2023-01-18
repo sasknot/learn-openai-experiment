@@ -41,9 +41,6 @@ export default function () {
   }
   async function handleCancel (id: string) {
     await openAI.cancelFineTune(id)
-    // setItems([
-    //   ...items.filter((item) => item.model === model)
-    // ])
     fetchItems().catch(console.error)
   }
   async function handleDestroy (model: string) {
@@ -95,21 +92,27 @@ export default function () {
                       See events
                     </button>
                   )}
-                  {' '}
-                  {row.status === 'pending' ? (
-                    <button
-                      type="button"
-                      onClick={() => handleCancel(row.id)}
-                    >
-                      Cancel
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => handleDestroy(row.model)}
-                    >
-                      Delete
-                    </button>
+                  {row.status === 'pending' && (
+                    <>
+                      {' '}
+                      <button
+                        type="button"
+                        onClick={() => handleCancel(row.id)}
+                      >
+                        Cancel
+                      </button>
+                    </>
+                  )}
+                  {row.fine_tuned_model && (
+                    <>
+                      {' '}
+                      <button
+                        type="button"
+                        onClick={() => handleDestroy(row.fine_tuned_model || '')}
+                      >
+                        Delete
+                      </button>
+                    </>
                   )}
                 </td>
               </tr>
