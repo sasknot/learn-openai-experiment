@@ -12,6 +12,10 @@
   -webkit-text-size-adjust: 100%;
 }
 
+button {
+  cursor: pointer;
+}
+
 #root {
   min-height: 100vh;
 
