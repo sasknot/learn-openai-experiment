@@ -1,50 +1,38 @@
-import type { OpenAIFile } from 'openai'
-import type { FormEvent } from 'react'
+import type { Model, OpenAIFile } from 'openai'
 import { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import openAI from '@/openai'
+import { SearchForm, SearchResult } from '@/search'
 import { FileForm, FileList } from '@/files'
 import { FineTuneList } from '@/fine-tunes'
 import './app.css'
-
-const StyledForm = styled.form`
-  width: 100%;
-  display: flex;
-  flex-flow: column nowrap;
-  gap: 10px;
-
-  input {
-    display: block;
-    width: 100%;
-    border-radius: 10px;
-
-    padding: 10px 20px;
-    font-size: 2rem;
-  }
-`
-
-const StyledResult = styled.div`
-  h2 {
-    font-size: 1.5rem;
-  }
-`
 
 const StyledHR = styled.hr`
   width: 100%;
 `
 
 export default function () {
-  const [input, setInput] = useState('')
-  const result = 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio, temporibus? Nulla officia, quo consectetur blanditiis nihil deleniti earum numquam repudiandae laudantium esse ipsam ut, veritatis, optio fugiat ducimus itaque debitis!'
+  const [modelListItems, setModelListItems] = useState<Model[]>([])
+  const [searchResult, setSearchResult] = useState('')
   const [fileListItems, setFileListItems] = useState<OpenAIFile[]>([])
 
+  async function fetchModels () {
+    const { data } = await openAI.listModels()
+    setModelListItems(data.data)
+  }
   async function fetchFileListItems () {
     const { data } = await openAI.listFiles()
     setFileListItems(data.data)
   }
-  function handlerSubmit (event: FormEvent) {
-    event.preventDefault()
-    console.log('input', input)
+  async function handleSearchSubmit (model: string, prompt: string) {
+    const { data } = await openAI.createCompletion({
+      model,
+      prompt,
+      max_tokens: 1024,
+      temperature: 0
+    })
+    console.log('data', data)
+    setSearchResult(data.choices.map(({ text }) => text).join('\n'))
   }
   async function handleFileListItemsFineTune (id: string) {
     await openAI.createFineTune({
@@ -61,7 +49,10 @@ export default function () {
   }
 
   useEffect(() => {
-    fetchFileListItems().catch(console.error)
+    Promise.all([
+      fetchModels(),
+      fetchFileListItems()
+    ]).catch(console.error)
   }, [])
 
   return (
@@ -72,15 +63,13 @@ export default function () {
         </div>
       </header>
       <main className="container">
-        <StyledForm onSubmit={handlerSubmit}>
-          <label htmlFor="input">Input</label>
-          <input id="input" onChange={({ target }) => setInput(target.value)} />
-        </StyledForm>
-        {result && (
-          <StyledResult>
-            <h2>Result:</h2>
-            <p>{result}</p>
-          </StyledResult>
+        <SearchForm models={modelListItems} onSubmit={handleSearchSubmit} />
+
+        {searchResult && (
+          <>
+            <StyledHR />
+            <SearchResult text={searchResult} />
+          </>
         )}
 
         <StyledHR />

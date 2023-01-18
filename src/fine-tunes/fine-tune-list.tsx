@@ -1,7 +1,7 @@
 import type { FineTune, FineTuneEvent } from 'openai'
 import styled from 'styled-components'
 import dayjs from 'dayjs'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Fragment } from 'react'
 import openAI from '@/openai'
 
 const StyledSection = styled.section`
@@ -71,8 +71,8 @@ export default function () {
         </thead>
         <tbody>
           {items.map((row, index) => (
-            <>
-              <tr key={index}>
+            <Fragment key={index}>
+              <tr>
                 <td>{row.id}</td>
                 <td>{row.fine_tuned_model}</td>
                 <td>{row.model}</td>
@@ -138,7 +138,7 @@ export default function () {
                   </td>
                 </tr>
               )}
-            </>
+            </Fragment>
           ))}
         </tbody>
       </table>
