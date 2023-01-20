@@ -9,18 +9,25 @@ type SearchFormProps = {
 }
 
 const StyledSection = styled.section`
-  width: 100%;
-  display: flex;
-  flex-flow: column nowrap;
-  gap: 10px;
+  form {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 10px;
+    align-items: start;
 
-  input {
-    display: block;
-    width: 100%;
-    border-radius: 10px;
+    input {
+      display: block;
+      width: 100%;
+      border-radius: 10px;
 
-    padding: 10px 20px;
-    font-size: 2rem;
+      padding: 10px 20px;
+      font-size: 2rem;
+    }
+
+    button {
+      font-size: 1.25rem;
+      padding: 5px 10px;
+    }
   }
 `
 
@@ -43,6 +50,7 @@ export default function ({ models = [], onSubmit }: SearchFormProps) {
           ))}
         </select>
         <input onChange={({ target }) => setInput(target.value)} />
+        <button type="submit">Send</button>
       </form>
     </StyledSection>
   )
