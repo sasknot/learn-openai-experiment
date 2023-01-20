@@ -4,6 +4,7 @@ import { useState } from 'react'
 import styled from 'styled-components'
 
 type SearchFormProps = {
+  loading?: boolean
   models: Model[]
   onSubmit?: (model: string, input: string) => void
 }
@@ -14,6 +15,11 @@ const StyledSection = styled.section`
     flex-flow: column nowrap;
     gap: 10px;
     align-items: start;
+
+    select {
+      font-size: 1rem;
+      padding: 5px;
+    }
 
     input {
       display: block;
@@ -31,26 +37,42 @@ const StyledSection = styled.section`
   }
 `
 
-export default function ({ models = [], onSubmit }: SearchFormProps) {
+export default function ({
+  loading = false,
+  models = [],
+  onSubmit
+}: SearchFormProps) {
   const [selectedModel, setSelectedModel] = useState('')
   const [input, setInput] = useState('')
 
   function handleSubmit (event: FormEvent) {
     event.preventDefault()
-    onSubmit && onSubmit(selectedModel, input)
+
+    if (!loading) {
+      onSubmit && onSubmit(selectedModel, input)
+    }
   }
 
   return (
     <StyledSection>
       <h2>Search input</h2>
       <form onSubmit={handleSubmit}>
-        <select onChange={({ target }) => setSelectedModel(target.value)}>
-          {models.map((model, index) => (
-            <option key={index}>{model.id}</option>
-          ))}
-        </select>
-        <input onChange={({ target }) => setInput(target.value)} />
-        <button type="submit">Send</button>
+        <div>
+          Model:
+          <select
+            disabled={loading}
+            onChange={({ target }) => setSelectedModel(target.value)}
+          >
+            {models.map((model, index) => (
+              <option key={index}>{model.id}</option>
+            ))}
+          </select>
+        </div>
+        <input
+          disabled={loading}
+          onChange={({ target }) => setInput(target.value)}
+        />
+        <button type="submit" disabled={loading}>Send</button>
       </form>
     </StyledSection>
   )

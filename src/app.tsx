@@ -12,6 +12,7 @@ const StyledHR = styled.hr`
 `
 
 export default function () {
+  const [searchFormLoading, setSearchFormLoading] = useState(false)
   const [modelListItems, setModelListItems] = useState<Model[]>([])
   const [searchResult, setSearchResult] = useState('')
   const [fileListItems, setFileListItems] = useState<OpenAIFile[]>([])
@@ -25,14 +26,15 @@ export default function () {
     setFileListItems(data.data)
   }
   async function handleSearchSubmit (model: string, prompt: string) {
+    setSearchFormLoading(true)
     const { data } = await openAI.createCompletion({
       model,
       prompt,
-      max_tokens: 1024,
+      max_tokens: 256,
       temperature: 0
     })
-    console.log('data', data)
     setSearchResult(data.choices.map(({ text }) => text).join('\n'))
+    setSearchFormLoading(false)
   }
   async function handleFileListItemsFineTune (id: string) {
     await openAI.createFineTune({
@@ -63,7 +65,11 @@ export default function () {
         </div>
       </header>
       <main className="container">
-        <SearchForm models={modelListItems} onSubmit={handleSearchSubmit} />
+        <SearchForm
+          loading={searchFormLoading}
+          models={modelListItems}
+          onSubmit={handleSearchSubmit}
+        />
 
         {searchResult && (
           <>
