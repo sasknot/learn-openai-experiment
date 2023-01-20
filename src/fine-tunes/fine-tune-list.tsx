@@ -1,8 +1,14 @@
 import type { FineTune, FineTuneEvent } from 'openai'
 import styled from 'styled-components'
 import dayjs from 'dayjs'
-import { useState, useEffect, Fragment } from 'react'
+import { useState, Fragment } from 'react'
 import openAI from '@/openai'
+
+type FineTuneListProps = {
+  items: FineTune[]
+  onCancel?: (id: string) => void
+  onDestroy?: (id: string) => void
+}
 
 const StyledSection = styled.section`
   table {
@@ -21,15 +27,10 @@ const StyledSection = styled.section`
   }
 `
 
-export default function () {
-  const [items, setItems] = useState<FineTune[]>([])
+export default function ({ items = [], onCancel, onDestroy }: FineTuneListProps) {
   const [openId, setOpenId] = useState('')
   const [events, setEvents] = useState<FineTuneEvent[]>([])
 
-  async function fetchItems () {
-    const { data } = await openAI.listFineTunes()
-    setItems(data.data)
-  }
   async function handleSeeEvents (id: string) {
     const { data } = await openAI.listFineTuneEvents(id)
     setOpenId(id)
@@ -39,20 +40,6 @@ export default function () {
       setOpenId('')
       setEvents([])
   }
-  async function handleCancel (id: string) {
-    await openAI.cancelFineTune(id)
-    fetchItems().catch(console.error)
-  }
-  async function handleDestroy (model: string) {
-    await openAI.deleteModel(model)
-    setItems([
-      ...items.filter((item) => item.model === model)
-    ])
-  }
-
-  useEffect(() => {
-    fetchItems().catch(console.error)
-  }, [])
 
   return (
     <StyledSection>
@@ -97,7 +84,7 @@ export default function () {
                       {' '}
                       <button
                         type="button"
-                        onClick={() => handleCancel(row.id)}
+                        onClick={() => onCancel && onCancel(row.id)}
                       >
                         Cancel
                       </button>
@@ -108,7 +95,7 @@ export default function () {
                       {' '}
                       <button
                         type="button"
-                        onClick={() => handleDestroy(row.fine_tuned_model || '')}
+                        onClick={() => onDestroy && onDestroy(row.fine_tuned_model || '')}
                       >
                         Delete
                       </button>
@@ -124,6 +111,7 @@ export default function () {
                         <tr>
                           <th>Level</th>
                           <th>Message</th>
+                          <th>Created at</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -131,6 +119,13 @@ export default function () {
                           <tr key={eventRowIndex}>
                             <td>{eventRow.level}</td>
                             <td>{eventRow.message}</td>
+                            <td>
+                              {
+                                dayjs
+                                  .unix(eventRow.created_at)
+                                  .format('YYYY-MM-DD HH:mm:ss')
+                              }
+                            </td>
                           </tr>
                         ))}
                       </tbody>

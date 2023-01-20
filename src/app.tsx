@@ -1,4 +1,4 @@
-import type { Model, OpenAIFile } from 'openai'
+import type { Model, OpenAIFile, FineTune } from 'openai'
 import { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import openAI from '@/openai'
@@ -16,6 +16,7 @@ export default function () {
   const [modelListItems, setModelListItems] = useState<Model[]>([])
   const [searchResult, setSearchResult] = useState('')
   const [fileListItems, setFileListItems] = useState<OpenAIFile[]>([])
+  const [fineTuneListItems, setFineTuneListItems] = useState<FineTune[]>([])
 
   async function fetchModels () {
     const { data } = await openAI.listModels()
@@ -24,6 +25,10 @@ export default function () {
   async function fetchFileListItems () {
     const { data } = await openAI.listFiles()
     setFileListItems(data.data)
+  }
+  async function fetchFineTuneListItems () {
+    const { data } = await openAI.listFineTunes()
+    setFineTuneListItems(data.data)
   }
   async function handleSearchSubmit (model: string, prompt: string) {
     setSearchFormLoading(true)
@@ -49,11 +54,23 @@ export default function () {
       ...fileListItems.filter((item) => item.id === id)
     ])
   }
+  async function handleFineTuneListItemsCancel (id: string) {
+    await openAI.cancelFineTune(id)
+    fetchFineTuneListItems().catch(console.error)
+  }
+  async function handleFineTuneListItemsDestroy (model: string) {
+    await openAI.deleteModel(model)
+    setFineTuneListItems([
+      ...fineTuneListItems.filter((item) => item.model === model)
+    ])
+  }
+
 
   useEffect(() => {
     Promise.all([
       fetchModels(),
-      fetchFileListItems()
+      fetchFileListItems(),
+      fetchFineTuneListItems()
     ]).catch(console.error)
   }, [])
 
@@ -89,7 +106,11 @@ export default function () {
         />
 
         <StyledHR />
-        <FineTuneList />
+        <FineTuneList
+          items={fineTuneListItems}
+          onCancel={handleFineTuneListItemsCancel}
+          onDestroy={handleFineTuneListItemsDestroy}
+        />
       </main>
       <footer>
         <div className="container">
