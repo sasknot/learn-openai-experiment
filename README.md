@@ -1,8 +1,8 @@
-# Learn: Dekiagari (OpenAI Experiment)
+# Learn: OpenAI Experiment
 
 Built with [Vite](https://vitejs.dev) + [React](https://reactjs.org) + [TypeScript](https://www.typescriptlang.org) + [styled components](https://styled-components.com) + [OpenAI](https://openai.com)
 
-See [demo](https://rafaelfsilva1-dekiagari.vercel.app)
+See [demo](https://rafaelfsilva1-openai-experiment.vercel.app)
 
 ## Development
 
